@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EventController } from './event/event.controller';
 import { Event } from './event/event.entity';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -14,11 +14,12 @@ import { Event } from './event/event.entity';
       username: 'root',
       password: '123456',
       database: 'nest-events',
-      entities: [Event],
       synchronize: true,
+      entities: [Event],
     }),
+    EventModule,
   ],
-  controllers: [AppController, EventController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

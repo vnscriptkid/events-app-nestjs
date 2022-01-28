@@ -12,50 +12,63 @@ import {
 } from '@nestjs/common';
 import { CreateEventDto } from './dtos/create-event.dto';
 import { Event } from './event.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Controller('events')
 export class EventController {
   private events: Event[] = [];
 
+  constructor(
+    @InjectRepository(Event)
+    private readonly eventRepository: Repository<Event>,
+  ) {}
+
   @Get()
-  findAll() {
-    return this.events;
+  async findAll() {
+    return await this.eventRepository.find();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.events.find((e) => e.id === +id);
+  async findOne(@Param('id') id: number) {
+    const event = await this.eventRepository.findOne(id);
+
+    if (!event) throw new NotFoundException();
+
+    return event;
   }
 
   @Post()
-  create(@Body() body: CreateEventDto) {
-    const event = {
+  async create(@Body() body: CreateEventDto) {
+    const event = this.eventRepository.create({
       ...body,
-      id: this.events.length + 1,
       when: new Date(body.when),
-    };
+    });
 
-    this.events.push(event);
+    return await this.eventRepository.save(event);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() body: UpdateEventDto) {
-    const eventIdx = this.events.findIndex((e) => e.id === +id);
+  async update(@Param('id') id: number, @Body() body: UpdateEventDto) {
+    const event = await this.eventRepository.findOne(id);
 
-    if (eventIdx === -1) throw new NotFoundException();
+    if (!event) throw new NotFoundException();
 
-    const event = this.events[eventIdx];
-
-    this.events[eventIdx] = {
-      ...event,
+    Object.assign(event, {
       ...body,
       when: body.when ? new Date(body.when) : event.when,
-    };
+    });
+
+    return await this.eventRepository.save(event);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: number) {
-    this.events = this.events.filter((e) => e.id !== +id);
+  async remove(@Param('id') id: number) {
+    const event = await this.eventRepository.findOne(id);
+
+    if (!event) throw new NotFoundException();
+
+    await this.eventRepository.remove(event);
   }
 }
