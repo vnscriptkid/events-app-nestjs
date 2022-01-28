@@ -13,7 +13,7 @@ import {
 import { CreateEventDto } from './dtos/create-event.dto';
 import { Event } from './event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, MoreThan, Repository } from 'typeorm';
 
 @Controller('events')
 export class EventController {
@@ -70,5 +70,35 @@ export class EventController {
     if (!event) throw new NotFoundException();
 
     await this.eventRepository.remove(event);
+  }
+
+  /*
+    select id, when
+    from events
+    where 
+      (id > 3 and when > '2021-02-12T13:00:00')
+      or description like '%meet%'
+      order by id desc;
+      limit 2
+   */
+  @Get('practice/complex')
+  async practice() {
+    return await this.eventRepository.find({
+      select: ['id', 'when'],
+      where: [
+        // where X or Y
+        {
+          id: MoreThan(3),
+          when: MoreThan(new Date('2021-02-12T13:00:00')),
+        },
+        {
+          description: Like('%meet%'),
+        },
+      ],
+      take: 2,
+      order: {
+        id: 'DESC',
+      },
+    });
   }
 }
