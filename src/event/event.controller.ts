@@ -10,7 +10,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CreateEventDto } from './dtos/create-event.dto';
 import { Event } from './event.entity';
@@ -19,8 +18,6 @@ import { Like, MoreThan, Repository } from 'typeorm';
 
 @Controller('events')
 export class EventController {
-  private events: Event[] = [];
-
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
