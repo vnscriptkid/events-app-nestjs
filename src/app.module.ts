@@ -12,6 +12,7 @@ import ormConfigProd from './config/orm.config.prod';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [ormConfig],
+      expandVariables: true,
     }),
     TypeOrmModule.forRootAsync({
       useFactory:
