@@ -16,6 +16,7 @@ import { CreateEventDto } from './dtos/create-event.dto';
 import { Event } from './event.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, MoreThan, Repository } from 'typeorm';
+import { Attendee } from './attendee.entity';
 
 @Controller('events')
 export class EventController {
@@ -25,6 +26,8 @@ export class EventController {
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    @InjectRepository(Attendee)
+    private readonly attendeeRepository: Repository<Attendee>,
   ) {}
 
   @Get()
@@ -110,5 +113,35 @@ export class EventController {
         id: 'DESC',
       },
     });
+  }
+
+  @Post('practice/add-attendee')
+  async addAttendee() {
+    const event = await this.eventRepository.findOne(1, {
+      relations: ['attendees'],
+    });
+
+    const attendee = await this.attendeeRepository.findOne(1);
+
+    event.attendees.push(attendee);
+
+    await this.eventRepository.save(event);
+
+    return await this.eventRepository.findOne(1, { relations: ['attendees'] });
+  }
+
+  @Post('practice/remove-attendee')
+  async removeAttendee() {
+    const event = await this.eventRepository.findOne(1, {
+      relations: ['attendees'],
+    });
+
+    const attendee = await this.attendeeRepository.findOne(1);
+
+    event.attendees = event.attendees.filter((a) => a.id !== attendee.id);
+
+    await this.eventRepository.save(event);
+
+    return await this.eventRepository.findOne(1, { relations: ['attendees'] });
   }
 }
