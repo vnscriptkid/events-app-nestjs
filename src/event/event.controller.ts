@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Logger,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -18,6 +19,8 @@ import { Like, MoreThan, Repository } from 'typeorm';
 
 @Controller('events')
 export class EventController {
+  private readonly logger = new Logger(EventController.name);
+
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
@@ -25,7 +28,12 @@ export class EventController {
 
   @Get()
   async findAll() {
-    return await this.eventRepository.find();
+    this.logger.log(`Hit ${EventController.name}:findAll()`);
+    const events = await this.eventRepository.find();
+    this.logger.debug(
+      `Returned ${events.length} events from ${EventController.name}:findAll()`,
+    );
+    return events;
   }
 
   @Get(':id')
