@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Attendee } from 'src/event/attendee.entity';
 import { Event } from '../event/event.entity';
 
 export default (): TypeOrmModuleOptions => ({
@@ -9,5 +10,5 @@ export default (): TypeOrmModuleOptions => ({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: true,
-  entities: [Event],
+  entities: [Event, Attendee],
 });

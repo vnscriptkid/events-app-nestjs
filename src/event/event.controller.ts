@@ -19,6 +19,7 @@ import { Like, MoreThan, Repository } from 'typeorm';
 
 @Controller('events')
 export class EventController {
+  // creating a brand new instance for every service is a good practice and allows us to supply the name of the service for the Logger constructor
   private readonly logger = new Logger(EventController.name);
 
   constructor(

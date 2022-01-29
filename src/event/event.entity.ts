@@ -4,8 +4,10 @@ import {
   AfterUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Attendee } from './attendee.entity';
 
 @Entity('events')
 export class Event {
@@ -23,6 +25,9 @@ export class Event {
 
   @Column()
   address: string;
+
+  @OneToMany(() => Attendee, (attendee) => attendee.event)
+  attendees: Attendee[];
 
   @AfterInsert()
   afterInsert() {
