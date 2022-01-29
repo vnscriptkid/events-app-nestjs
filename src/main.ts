@@ -7,7 +7,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
+      transform: true, // literal object into class instance of dto, convert params based to type annotation
     }),
   );
 

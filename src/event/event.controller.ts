@@ -32,7 +32,7 @@ export class EventController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: number) {
     const event = await this.eventRepository.findOne(id);
 
     if (!event) throw new NotFoundException();
@@ -51,10 +51,7 @@ export class EventController {
   }
 
   @Patch(':id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateEventDto,
-  ) {
+  async update(@Param('id') id: number, @Body() body: UpdateEventDto) {
     const event = await this.eventRepository.findOne(id);
 
     if (!event) throw new NotFoundException();
