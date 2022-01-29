@@ -30,7 +30,9 @@ export class EventController {
   @Get()
   async findAll() {
     this.logger.log(`Hit ${EventController.name}:findAll()`);
-    const events = await this.eventRepository.find();
+    const events = await this.eventRepository.find({
+      relations: ['attendees'],
+    });
     this.logger.debug(
       `Returned ${events.length} events from ${EventController.name}:findAll()`,
     );
