@@ -41,7 +41,7 @@ export class EventController {
   }
 
   @Post()
-  async create(@Body(ValidationPipe) body: CreateEventDto) {
+  async create(@Body() body: CreateEventDto) {
     const event = this.eventRepository.create({
       ...body,
       when: new Date(body.when),
@@ -53,7 +53,7 @@ export class EventController {
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(ValidationPipe) body: UpdateEventDto,
+    @Body() body: UpdateEventDto,
   ) {
     const event = await this.eventRepository.findOne(id);
 
