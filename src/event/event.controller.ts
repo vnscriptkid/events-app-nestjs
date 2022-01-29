@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateEventDto } from './dtos/create-event.dto';
 import { Event } from './event.entity';
@@ -40,7 +41,7 @@ export class EventController {
   }
 
   @Post()
-  async create(@Body() body: CreateEventDto) {
+  async create(@Body(ValidationPipe) body: CreateEventDto) {
     const event = this.eventRepository.create({
       ...body,
       when: new Date(body.when),
@@ -52,7 +53,7 @@ export class EventController {
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: UpdateEventDto,
+    @Body(ValidationPipe) body: UpdateEventDto,
   ) {
     const event = await this.eventRepository.findOne(id);
 
