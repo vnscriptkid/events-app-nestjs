@@ -1,5 +1,5 @@
 INSERT INTO
-    `event` (`id`, `description`, `when`, `address`, `name`)
+    `nest-events`.`events` (`id`, `description`, `when`, `address`, `name`)
 VALUES
     (
         1,
@@ -38,7 +38,7 @@ VALUES
     );
 
 INSERT INTO
-    `attendee` (`id`, `name`, `eventId`)
+    `nest-events`.`attendees` (`id`, `name`, `event_id`)
 VALUES
     (1, 'Piotr', 1),
     (2, 'John', 1),
