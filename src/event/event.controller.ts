@@ -7,6 +7,7 @@ import {
   HttpCode,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -30,7 +31,7 @@ export class EventController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const event = await this.eventRepository.findOne(id);
 
     if (!event) throw new NotFoundException();
@@ -49,7 +50,10 @@ export class EventController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() body: UpdateEventDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateEventDto,
+  ) {
     const event = await this.eventRepository.findOne(id);
 
     if (!event) throw new NotFoundException();
@@ -64,7 +68,7 @@ export class EventController {
 
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     const event = await this.eventRepository.findOne(id);
 
     if (!event) throw new NotFoundException();
