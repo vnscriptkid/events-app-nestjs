@@ -16,11 +16,54 @@ export class EventService {
     return this.eventRepository.createQueryBuilder('e').orderBy('e.id', 'DESC');
   }
 
-  public async getEvent(id: number) {
-    const query = this.getEventsBaseQuery().andWhere('e.id = :id', { id });
+  public async getEvent(id: number): Promise<Event | undefined> {
+    const query = this.getEventsWithAttendeesCountQuery().andWhere(
+      'e.id = :id',
+      { id },
+    );
 
-    this.logger.debug(`getEvent(${id}): ${query.getSql()}`);
+    this.logger.debug(`getEvent(${id}): ${query.getQuery()}`);
 
     return await query.getOne();
+  }
+
+  public getEventsWithAttendeesCountQuery() {
+    return this.getEventsBaseQuery().loadRelationCountAndMap(
+      'e.attendeesCount',
+      'e.attendees',
+    );
+  }
+
+  public async getEventWithAttendeesCount(
+    id: number,
+  ): Promise<Event | undefined> {
+    // https://davidhamann.de/2017/07/11/sql-get-the-count-of-related-records/
+    /* SUBQUERY */
+    // const events = await this.eventRepository.query(
+    //   `
+    //   select
+    //     *,
+    //     (select count(*) from attendees a where a.event_id = ?) as attendeesCount
+    //   from events e
+    //   where e.id = ?;
+    // `,
+    //   [id, id],
+    // );
+
+    /* JOIN */
+    const events = await this.eventRepository.query(
+      `
+      select
+        e.*,
+        count(a.id) as attendeesCount
+      from events e
+      left join attendees a on e.id = a.event_id
+      where e.id = ?
+      group by e.id
+    `,
+      [id],
+    );
+
+    return events[0];
   }
 }

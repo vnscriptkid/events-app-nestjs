@@ -30,7 +30,10 @@ export class Event {
     cascade: true,
   })
   attendees: Attendee[];
+  /* VIRTUAL FIELDS */
+  attendeesCount?: number;
 
+  /* HOOKS */
   @AfterInsert()
   afterInsert() {
     console.log(`Event created #${this.id}`);

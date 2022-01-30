@@ -46,7 +46,7 @@ export class EventController {
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    const event = await this.eventService.getEvent(id);
+    const event = await this.eventService.getEventWithAttendeesCount(id);
 
     if (!event) throw new NotFoundException();
 
